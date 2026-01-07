@@ -1,0 +1,153 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+}
+
+
+/* Button Kembali ke Beranda */
+
+.back-btn {
+    background-color: #2d6a4f;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.back-btn i {
+    margin-right: 10px;
+}
+
+.back-btn:hover {
+    background-color: #3b7d64;
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+
+/* Kontainer untuk Foto dan Deskripsi */
+
+.detail-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: flex-start;
+    width: 80%;
+    max-width: 1000px;
+    margin-top: 60px;
+    /* Memberikan jarak dari tombol kembali */
+}
+
+
+/* Kotak Hijau */
+
+.green-box {
+    background-color: #2d6a4f;
+    /* Warna hijau */
+    padding: 20px;
+    border-radius: 10px;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 350px;
+    /* Menentukan tinggi kotak hijau yang lebih tinggi */
+}
+
+
+/* Gambar dalam kotak hijau */
+
+.green-box .image {
+    width: 300px;
+    /* Ukuran gambar */
+    height: 300px;
+    /* Ukuran gambar */
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+
+/* Kotak Kuning */
+
+.yellow-box {
+    background-color: #fef9c7;
+    /* Warna kuning */
+    padding: 15px;
+    /* Mengurangi padding agar lebih rapat */
+    border-radius: 10px;
+    width: 100%;
+    max-width: 500px;
+    position: relative;
+    margin-top: auto;
+    /* Menurunkan kotak kuning ke bawah */
+    height: 300px;
+    /* Menyesuaikan tinggi dengan kotak hijau */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+
+/* Judul di atas kotak kuning */
+
+.yellow-box .title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    position: absolute;
+    top: -50px;
+    /* Mengatur nama agar berada tepat di atas kotak kuning */
+    left: 20px;
+    padding: 0 5px;
+}
+
+
+/* Deskripsi dalam kotak kuning */
+
+.yellow-box .description {
+    font-size: 16px;
+    margin-bottom: 10px;
+    line-height: 1.5;
+    /* Mengurangi jarak antar baris */
+}
+
+
+/* Teks pencegahan */
+
+.yellow-box .prevention-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.yellow-box .prevention-list {
+    list-style-type: none;
+    padding-left: 20px;
+    margin-top: -30px;
+    /* Mengurangi jarak antara judul dan list */
+}
+
+.yellow-box .prevention-list li {
+    font-size: 16px;
+    margin-bottom: 5px;
+    /* Mengurangi jarak antara item list */
+}

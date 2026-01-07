@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Penyakit - PlantCheck</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+         :root {
+            --primary-green: #2e7d32;
+            --accent-green: #4caf50;
+            --light-green: #e8f5e9;
+            --text-dark: #1b1b1b;
+            --text-grey: #555;
+            --white: #ffffff;
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            --radius: 16px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        /* --- Navbar --- */
+        
+        .navbar {
+            background-color: var(--white);
+            padding: 15px 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-btn {
+            text-decoration: none;
+            color: var(--text-grey);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nav-btn:hover {
+            color: var(--primary-green);
+        }
+        
+        .scan-mini-btn {
+            background-color: var(--primary-green);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .scan-mini-btn:hover {
+            background-color: #1b5e20;
+        }
+        /* --- Main Layout --- */
+        
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            /* Kolom Gambar & Teks */
+            gap: 40px;
+            align-items: start;
+        }
+        /* --- Image Section --- */
+        
+        .image-card {
+            background: var(--white);
+            padding: 15px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 90px;
+            /* Agar gambar tetap terlihat saat scroll teks panjang */
+        }
+        
+        .image-wrapper {
+            width: 100%;
+            height: 350px;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: #eee;
+            position: relative;
+        }
+        
+        .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .image-wrapper:hover img {
+            transform: scale(1.05);
+        }
+        
+        .plant-tag {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            backdrop-filter: blur(4px);
+        }
+        /* --- Content Section --- */
+        
+        .content-card {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .title-section h1 {
+            font-size: 2rem;
+            color: var(--primary-green);
+            line-height: 1.2;
+            margin-bottom: 10px;
+        }
+        
+        .title-underline {
+            width: 60px;
+            height: 4px;
+            background-color: var(--accent-green);
+            border-radius: 2px;
+        }
+        
+        .description-box {
+            background-color: var(--white);
+            padding: 25px;
+            border-radius: var(--radius);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            border-left: 4px solid var(--primary-green);
+        }
+        
+        .description-box h3 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: var(--text-dark);
+        }
+        
+        .description-box p {
+            line-height: 1.6;
+            color: var(--text-grey);
+            font-size: 0.95rem;
+        }
+        /* --- Prevention List --- */
+        
+        .prevention-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .prevention-section h3 i {
+            color: var(--accent-green);
+        }
+        
+        .prevention-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .prevention-item {
+            background-color: var(--white);
+            padding: 15px 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+            transition: transform 0.2s;
+            border: 1px solid #f0f0f0;
+        }
+        
+        .prevention-item:hover {
+            transform: translateX(5px);
+            border-color: var(--accent-green);
+        }
+        
+        .check-icon {
+            background-color: var(--light-green);
+            color: var(--primary-green);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.7rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        /* --- Error State --- */
+        
+        .not-found {
+            text-align: center;
+            margin-top: 50px;
+            color: var(--text-grey);
+        }
+        /* --- Responsive --- */
+        
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .image-card {
+                position: static;
+                /* Hilangkan sticky di mobile */
+            }
+            .image-wrapper {
+                height: 250px;
+            }
+            .title-section h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <button class="nav-btn" onclick="window.history.back()" style="background:none; border:none; cursor:pointer;">
+            <i class="fas fa-arrow-left"></i> Kembali
+        </button>
+
+        <a href="scan.html" class="scan-mini-btn">
+            <i class="fas fa-camera"></i> Scan Penyakit
+        </a>
+    </nav>
+
+    <div class="container" id="main-content">
+
+        <div class="image-card">
+            <div class="image-wrapper">
+                <span class="plant-tag" id="plant-tag">Tanaman</span>
+                <img id="tanaman-foto" src="" alt="Foto Penyakit">
+            </div>
+        </div>
+
+        <div class="content-card">
+
+            <div class="title-section">
+                <h1 id="tanaman-title">Memuat...</h1>
+                <div class="title-underline"></div>
+            </div>
+
+            <div class="description-box">
+                <h3><i class="fas fa-info-circle"></i> Gejala & Deskripsi</h3>
+                <p id="tanaman-description">Sedang mengambil data penyakit...</p>
+            </div>
+
+            <div class="prevention-section">
+                <h3><i class="fas fa-shield-alt"></i> Solusi & Pencegahan</h3>
+                <ul class="prevention-list" id="tanaman-prevention">
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="error-msg" class="not-found" style="display: none;">
+        <i class="fas fa-exclamation-circle" style="font-size: 3rem; color: #ddd; margin-bottom: 20px;"></i>
+        <h2>Data Tidak Ditemukan</h2>
+        <p>Maaf, informasi penyakit tidak tersedia.</p>
+        <br>
+        <a href="index.html" class="scan-mini-btn" style="display:inline-flex;">Ke Beranda</a>
+    </div>
+
+    <script>
+        // --- DATASET PENYAKIT ---
+        const tanamanData = {
+            Late_Blight: {
+                foto: '5.jpeg',
+                plant: 'Tomat',
+                title: 'Late Blight (Busuk Daun)',
+                description: 'Penyakit jamur air (Phytophthora infestans) yang sangat merusak. Menyebabkan bercak coklat kehitaman basah di daun yang menyebar cepat. Batang dan buah juga bisa membusuk.',
+                prevention: [
+                    'Gunakan varietas tomat yang tahan penyakit.',
+                    'Semprotkan fungisida preventif secara berkala.',
+                    'Segera cabut dan bakar tanaman yang terinfeksi.',
+                    'Hindari kelembapan tinggi, siram di pagi hari.'
+                ]
+            },
+            Mosaic_Disease: {
+                foto: '7.jpeg',
+                plant: 'Singkong',
+                title: 'Mosaic Disease (Mosaik)',
+                description: 'Disebabkan oleh virus, penyakit ini membuat daun singkong memiliki pola belang-belang (mosaik) kuning hijau. Daun seringkali mengerut dan pertumbuhan umbi terhambat.',
+                prevention: [
+                    'Gunakan bibit unggul yang bersertifikat bebas virus.',
+                    'Jaga kebersihan alat pertanian agar tidak menular.',
+                    'Kendalikan kutu kebul sebagai vektor virus.',
+                    'Lakukan rotasi tanaman secara teratur.'
+                ]
+            },
+            Sheath_Blight: {
+                foto: '8.jpeg',
+                plant: 'Padi',
+                title: 'Sheath Blight (Hawar Pelepah)',
+                description: 'Penyakit jamur Rhizoctonia solani. Muncul bercak oval abu-abu kehijauan pada pelepah daun dekat permukaan air. Dapat menyebabkan tanaman padi rebah.',
+                prevention: [
+                    'Atur jarak tanam agar tidak terlalu rapat (jajar legowo).',
+                    'Hindari pemakaian pupuk Nitrogen berlebihan.',
+                    'Keringkan sawah secara berkala (intermiten).',
+                    'Semprotkan fungisida berbahan aktif validamycin.'
+                ]
+            },
+            Leaf_Curl: {
+                foto: '1.jpeg',
+                plant: 'Tomat',
+                title: 'Yellow Leaf Curl Virus',
+                description: 'Virus yang ditularkan kutu kebul (Bemisia tabaci). Daun muda menguning, mengeriting ke atas, dan tanaman tumbuh kerdil. Produksi buah sangat menurun.',
+                prevention: [
+                    'Pasang perangkap kuning (Yellow Trap) untuk kutu kebul.',
+                    'Gunakan mulsa perak untuk memantulkan cahaya.',
+                    'Bersihkan gulma di sekitar tanaman.',
+                    'Gunakan insektisida sistemik untuk vektor virus.'
+                ]
+            },
+            Leaf_Spot: {
+                foto: '2.jpeg',
+                plant: 'Tomat',
+                title: 'Septoria Leaf Spot',
+                description: 'Bercak kecil bulat dengan pusat berwarna abu-abu dan pinggiran gelap. Biasanya menyerang daun bagian bawah terlebih dahulu, menyebabkan daun rontok.',
+                prevention: [
+                    'Pangkas daun bawah agar tidak menyentuh tanah.',
+                    'Berikan mulsa untuk mencegah cipratan tanah ke daun.',
+                    'Hindari menyiram tanaman dari atas (sprinkler).',
+                    'Aplikasikan fungisida tembaga atau mancozeb.'
+                ]
+            },
+            Bacterial_Spot: {
+                foto: '3.jpeg',
+                plant: 'Tomat',
+                title: 'Bacterial Spot (Bercak Bakteri)',
+                description: 'Bintik-bintik kecil berair yang berubah menjadi hitam pada daun dan buah. Pada buah tomat, bercak terlihat seperti kutil yang kasar.',
+                prevention: [
+                    'Rendam benih di air hangat sebelum tanam.',
+                    'Hindari bekerja di lahan saat tanaman basah.',
+                    'Semprotkan bakterisida tembaga (Copper).',
+                    'Lakukan rotasi tanaman dengan famili bukan Solanaceae.'
+                ]
+            },
+            Leaf_Mold: {
+                foto: '4.jpeg',
+                plant: 'Tomat',
+                title: 'Leaf Mold (Kapang Daun)',
+                description: 'Bercak kuning pucat di permukaan atas daun, sementara di bagian bawahnya terdapat spora jamur berwarna hijau zaitun atau ungu beludru.',
+                prevention: [
+                    'Pastikan sirkulasi udara di dalam greenhouse baik.',
+                    'Kurangi kelembapan udara.',
+                    'Gunakan varietas tahan Cladosporium.',
+                    'Semprot fungisida saat gejala awal muncul.'
+                ]
+            },
+            Bacterial_Blight: {
+                foto: '19.jpeg',
+                plant: 'Singkong',
+                title: 'Bacterial Blight (Hawar Bakteri)',
+                description: 'Disebabkan Xanthomonas. Daun memiliki bercak bersudut (angular) basah, kemudian mengering coklat. Dapat menyebabkan mati pucuk (dieback).',
+                prevention: [
+                    'Gunakan stek batang dari tanaman sehat.',
+                    'Potong bagian tanaman yang terinfeksi dan bakar.',
+                    'Bersihkan alat potong dengan alkohol/pemutih.',
+                    'Tunda tanam hingga musim hujan reda.'
+                ]
+            },
+            Late_Blight2: {
+                foto: '17.jpeg',
+                plant: 'Kentang',
+                title: 'Late Blight (Busuk Daun)',
+                description: 'Mirip dengan tomat, menyebabkan bercak nekrotik luas pada daun. Jika hujan terus menerus, seluruh tanaman bisa membusuk dalam beberapa hari.',
+                prevention: [
+                    'Timbun umbi kentang dengan baik agar spora tidak masuk.',
+                    'Semprot fungisida protektif sebelum hujan.',
+                    'Panen saat cuaca kering.'
+                ]
+            },
+            Gray_Leaf: {
+                foto: '15.jpeg',
+                plant: 'Jagung',
+                title: 'Gray Leaf Spot',
+                description: 'Bercak persegi panjang sempit berwarna abu-abu sejajar dengan tulang daun. Jika parah, daun mengering seperti terbakar.',
+                prevention: [
+                    'Pilih hibrida jagung yang resisten.',
+                    'Lakukan pengolahan tanah sempurna untuk mengubur sisa tanaman.',
+                    'Rotasi tanaman minimal 1 tahun.'
+                ]
+            },
+            Common_Rust: {
+                foto: '12.jpeg',
+                plant: 'Jagung',
+                title: 'Common Rust (Karat Daun)',
+                description: 'Pustul (bintil) kecil berwarna coklat kemerahan di kedua sisi daun. Spora mudah diterbangkan angin.',
+                prevention: [
+                    'Tanam varietas tahan karat.',
+                    'Aplikasi fungisida jika pustul muncul sebelum pembungaan.',
+                    'Penanaman serempak dalam satu hamparan.'
+                ]
+            },
+            Northern_Leaf: {
+                foto: '9.jpeg',
+                plant: 'Jagung',
+                title: 'Northern Leaf Blight',
+                description: 'Bercak berbentuk cerutu (oval memanjang) besar berwarna abu-abu kehijauan. Dapat mematikan jaringan daun secara luas.',
+                prevention: [
+                    'Gunakan varietas tahan.',
+                    'Semprot fungisida sistemik.',
+                    'Kelola residu tanaman sisa panen dengan baik.'
+                ]
+            },
+            Early_Blight: {
+                foto: '10.jpeg',
+                plant: 'Kentang',
+                title: 'Early Blight (Bercak Kering)',
+                description: 'Bercak coklat dengan pola cincin konsentris (seperti papan target). Daun yang parah akan menguning dan rontok.',
+                prevention: [
+                    'Jaga kesuburan tanah (pupuk berimbang).',
+                    'Hindari stres tanaman (kekeringan).',
+                    'Aplikasi fungisida mancozeb atau chlorothalonil.'
+                ]
+            },
+            Bacterial_Leaf: {
+                foto: '18.jpeg',
+                plant: 'Padi',
+                title: 'Bacterial Leaf Blight (Kresek)',
+                description: 'Garis memanjang basah kekuningan di tepi daun, lama kelamaan menjadi kering putih/abu-abu. Sangat parah di musim hujan.',
+                prevention: [
+                    'Hindari pemupukan Urea (N) berlebihan.',
+                    'Jangan memotong akar bibit saat pindah tanam.',
+                    'Atur pengairan (jangan digenangi terus).',
+                    'Gunakan bakterisida tembaga oksida.'
+                ]
+            },
+            Brown_Spot: {
+                foto: '14.jpeg',
+                plant: 'Padi',
+                title: 'Brown Spot (Bercak Coklat)',
+                description: 'Bercak oval coklat dengan titik abu-abu di tengah (seperti mata biji wijen). Menyerang tanaman yang kekurangan nutrisi.',
+                prevention: [
+                    'Perbaiki kesuburan tanah (tambah Kalium & Silika).',
+                    'Gunakan benih yang sehat.',
+                    'Aplikasi fungisida propikonazol.'
+                ]
+            },
+            Leaf_Scald: {
+                foto: '11.jpeg',
+                plant: 'Padi',
+                title: 'Leaf Scald (Hawar Daun)',
+                description: 'Pola zoni (garis-garis) coklat muda dan coklat tua bergantian di ujung daun, memberikan kesan seperti tersiram air panas.',
+                prevention: [
+                    'Hindari penggunaan alat potong yang terkontaminasi.',
+                    'Buang gulma inang di sekitar sawah.',
+                    'Gunakan benih bersertifikat.'
+                ]
+            },
+            Brown_Streak: {
+                foto: '16.jpeg',
+                plant: 'Singkong',
+                title: 'Brown Streak Disease',
+                description: 'Penyakit virus yang sulit dideteksi di daun (hanya klorosis ringan), namun menyebabkan nekrosis (busuk kering coklat) di dalam umbi.',
+                prevention: [
+                    'Gunakan bibit dari sumber yang terjamin bebas virus.',
+                    'Panen lebih awal untuk mengurangi kerusakan umbi.',
+                    'Musnahkan tanaman sakit.'
+                ]
+            },
+            Green_Mottle: {
+                foto: '13.jpeg',
+                plant: 'Singkong',
+                title: 'Green Mottle',
+                description: 'Bercak hijau muda samar pada daun, kadang disertai distorsi ringan. Pertumbuhan tanaman mungkin sedikit terhambat.',
+                prevention: [
+                    'Gunakan stek batang sehat.',
+                    'Kendalikan gulma di sekitar tanaman.',
+                    'Cabut tanaman yang menunjukkan gejala aneh.'
+                ]
+            }
+        };
+
+        // --- LOGIC DISPLAY ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const tanamanKey = params.get('tanaman');
+
+            if (tanamanKey && tanamanData[tanamanKey]) {
+                const data = tanamanData[tanamanKey];
+
+                // Set Gambar & Tag
+                document.getElementById('tanaman-foto').src = data.foto;
+                document.getElementById('plant-tag').textContent = data.plant || 'Tanaman';
+
+                // Set Judul & Deskripsi
+                document.getElementById('tanaman-title').innerText = data.title;
+                document.getElementById('tanaman-description').innerText = data.description;
+                document.title = data.title + " - PlantCheck"; // Update Title Tab Browser
+
+                // Generate List Pencegahan
+                const preventionList = document.getElementById('tanaman-prevention');
+                preventionList.innerHTML = ''; // Clear loading text
+
+                data.prevention.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = 'prevention-item';
+                    li.innerHTML = `
+                        <div class="check-icon"><i class="fas fa-check"></i></div>
+                        <span>${item}</span>
+                    `;
+                    preventionList.appendChild(li);
+                });
+
+            } else {
+                // Tampilkan Error jika data tidak ada
+                document.getElementById('main-content').style.display = 'none';
+                document.getElementById('error-msg').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+
+</html>

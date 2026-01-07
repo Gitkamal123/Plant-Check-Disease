@@ -1,0 +1,23 @@
+Daun Jagung Sehat
+Daun Jagung Terserang Cercospora Leaf Spot Gray Leaf Spot
+Daun Jagung Terserang Common Rust
+Daun Jagung Terserang Northern Leaf Blight
+Daun Kentang Sehat
+Daun Kentang Terserang Early Blight
+Daun Kentang Terserang Late Blight
+Daun Padi Sehat
+Daun Padi Terserang Bacterial Leaf Blight
+Daun Padi Terserang Brown Spot
+Daun Padi Terserang Leaf Scald
+Daun Padi Terserang Sheath Blight
+Daun Singkong Sehat
+Daun Singkong Terserang Bacterial Blight
+Daun Singkong Terserang Brown Streak Disease
+Daun Singkong Terserang Green Mottle
+Daun Singkong Terserang Mosaic Disease
+Daun Tomat Sehat
+Daun Tomat Terserang Bacterial Spot
+Daun Tomat Terserang Late Blight
+Daun Tomat Terserang Leaf Mold
+Daun Tomat Terserang Septoria Leaf Spot
+Daun Tomat Terserang Yellow Leaf Curl Virus

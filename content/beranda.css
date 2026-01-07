@@ -1,0 +1,379 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #FCDC2A; /* Warna kuning navbar */
+    width: 100%;
+    display: flex;
+    justify-content: space-between; /* Memberikan jarak antar elemen navbar */
+    align-items: center;
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+.leaf-icons {
+    display: flex;
+    align-items: center;
+}
+
+.leaf-icons i {
+    font-size: 30px; /* Ukuran ikon daun */
+    color: black;
+}
+
+.nav-list {
+    display: flex;
+    list-style-type: none;
+    margin-right: 20px; /* Memberikan jarak antara menu dan lonceng */
+}
+
+.nav-list li {
+    margin-right: 20px;
+}
+
+.nav-list a {
+    text-decoration: none;
+    color: black;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.nav-list a.active {
+    color: green; /* Menandakan menu yang aktif dengan warna hijau */
+}
+
+/* Header */
+.header {
+    background-color: #2d6a4f; /* Warna hijau besar */
+    width: 100%;
+    height: 60vh; /* Memperbesar tinggi hijau besar */
+    position: relative;
+    top: 0; /* Menempel di atas */
+    left: 0; /* Agar header menyentuh kiri */
+    border-bottom-left-radius: 100% 50%; /* Membuat lengkungan di bagian atas */
+    border-bottom-right-radius: 100% 50%; /* Membuat lengkungan di bagian atas */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2; /* Memastikan header berada di atas konten */
+}
+
+/* Kotak Aksi */
+.action-container {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+    max-width: 1000px;  /* Ukuran kotak hijau kembali ke semula */
+    position: absolute;
+    top: 15%; /* Menurunkan posisi kotak hijau agar tidak terlalu mepet dengan navbar */
+    z-index: 3;
+    flex-wrap: wrap;
+    margin-bottom: 30px; /* Memberikan jarak antara action-box dan kotak kuning */
+}
+
+/* Kotak Kiri */
+.action-left {
+    background-color: #4e9f7b; /* Warna hijau terang untuk kotak kiri */
+    padding: 20px;
+    border-radius: 10px;
+    color: white;
+    width: 45%;
+    text-align: center;
+}
+
+.action-item {
+    display: flex;
+    justify-content: space-evenly;
+    margin-bottom: 10px;
+}
+
+.action-item i {
+    font-size: 25px;
+}
+
+/* Kotak Kanan (Notification dan Scan Daun Sekarang) */
+.action-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 45%;
+}
+
+.notification-btn,
+.scan-btn {
+    background-color: #4e9f7b; /* Warna hijau terang untuk tombol */
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.3s;
+}
+
+.notification-btn i,
+.scan-btn i {
+    font-size: 30px;
+    margin-right: 10px;
+}
+
+.notification-btn:hover,
+.scan-btn:hover {
+    background-color: #3b7d64; /* Warna hijau lebih gelap saat hover */
+    transform: translateY(-5px); /* Efek hover untuk tombol */
+}
+
+.notification-box,
+.scan-box {
+    background-color: #4e9f7b; /* Warna hijau terang untuk kotak kanan */
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.notification-box i,
+.scan-box i {
+    font-size: 30px;
+    margin-right: 10px;
+}
+
+/* Kotak Statistik */
+.stats-container {
+    display: flex;
+    justify-content: space-evenly;
+    width: 80%;
+    max-width: 1000px;
+    position: relative; /* Menggunakan relative untuk memposisikan kotak di atas konten */
+    top: 30%; /* Menyesuaikan posisi agar kotak kuning berada di tengah hijau dan putih */
+    transform: translateY(-50%); /* Membantu untuk mengatur posisi agar lebih tepat di tengah */
+    z-index: 3; /* Memastikan kotak berada di atas header */
+}
+
+.stat-box {
+    background-color: #fef9c7; /* Warna kuning */
+    padding: 30px;
+    border-radius: 10px;
+    width: 200px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.stat-box h2 {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.stat-box p {
+    font-size: 1rem;
+    color: #333;
+}
+
+/* Kategori Penyakit Section */
+.KategoriPenyakit {
+    font-size: 24px;
+    font-weight: 800;
+    color: black;
+    margin-bottom: 15px;
+}
+
+.Frame5 {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+    justify-content: center;
+}
+
+.Frame5 > button {
+    background-color: #d9d9d9; /* Warna latar belakang tombol */
+    padding: 10px 20px;
+    border-radius: 15px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-weight: bold;
+    font-size: 16px;
+    color: black;
+}
+
+.Frame5 > button:hover {
+    background-color: #c0c0c0; /* Warna latar belakang tombol saat hover */
+    transform: translateY(-5px); /* Efek hover tombol */
+}
+
+/* Mengatur tombol kategori yang dipilih */
+.Frame5 > button.active {
+    background-color: #4e9f7b; /* Warna hijau untuk kategori yang aktif */
+    color: white;
+}
+
+/* Efek saat hover untuk tombol kategori yang dipilih */
+.Frame5 > button.active:hover {
+    background-color: #3b7d64; /* Warna hijau lebih gelap saat hover */
+}
+
+
+.Frame5 > div {
+    background-color: #d9d9d9;
+    padding: 10px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.Frame5 > div:hover {
+    background-color: #c0c0c0;
+}
+
+/* Pustaka Penyakit Section */
+.PustakaPenyakit {
+    font-size: 24px;
+    font-weight: 800;
+    color: black;
+    margin-bottom: 20px;
+}
+
+.Frame7 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Membuat dua kolom */
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+/* Sembunyikan penyakit yang tidak sesuai kategori */
+.Penyakit {
+    display: none; /* Semua penyakit disembunyikan secara default */
+}
+
+/* Menampilkan penyakit berdasarkan kategori yang dipilih */
+.Penyakit.Tomat,
+.Penyakit.Singkong,
+.Penyakit.Padi,
+.Penyakit.Kentang,
+.Penyakit.Jagung {
+    display: block;
+}
+
+.Penyakit {
+    background-color: #f7f6bb;
+    border-radius: 15px;
+    display: flex;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+    flex-direction: column; /* Mengatur agar gambar dan teks berada dalam satu kolom */
+}
+
+.Penyakit:hover {
+    transform: translateY(-5px);
+}
+
+.Penyakit img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.Penyakit .details {
+    flex-grow: 1;
+}
+
+.Penyakit .title {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 5px;
+}
+
+.Penyakit .description {
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+
+.Penyakit .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.Penyakit .tag-plant, .Penyakit .tag-symptom {
+    border-radius: 9px;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 400;
+    background-color: #d9d9d9;
+}
+
+.Penyakit .tag-plant.Tomat {
+    background-color: #f9c3c3;
+    color: #d30000;
+}
+
+.Penyakit .tag-plant.Singkong {
+    background-color: #e2fb00;
+    color: #545000;
+}
+
+.Penyakit .tag-plant.Padi {
+    background-color: #43ff8b;
+    color: #2d5000;
+}
+
+.Penyakit .tag-plant.Kentang {
+    background-color: #4dfff3;
+    color: #00615e;
+}
+
+.Penyakit .tag-plant.Jagung {
+    background-color: #c093ff;
+    color: #7c0098;
+}
+
+.Penyakit .tag-symptom {
+    background-color: #d9d9d9;
+    color: black;
+}
+
+/* Menyembunyikan warna biru default dan memberikan styling agar terlihat seperti tombol */
+a {
+    text-decoration: none; /* Menghilangkan garis bawah */
+    color: black; /* Menetapkan warna biru (atau warna lain yang sesuai) */
+    cursor: pointer; /* Menunjukkan bahwa itu adalah elemen yang bisa diklik */
+  
+}
+
+/* Efek hover untuk link agar lebih interaktif */
+a:hover {
+    color: #0056b3; /* Ubah warna saat hover */
+    text-decoration: underline; /* Menambahkan garis bawah saat dihover */
+    transition: all 0.3s ease; /* Efek transisi yang halus */
+}
+

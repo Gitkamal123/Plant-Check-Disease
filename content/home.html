@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Disease Detector</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+         :root {
+            --primary-green: #2e7d32;
+            --light-green: #e8f5e9;
+            --accent-green: #4caf50;
+            --text-dark: #1b1b1b;
+            --text-grey: #666;
+            --white: #ffffff;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            --radius: 12px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: #f4f7f6;
+            color: var(--text-dark);
+            padding-bottom: 50px;
+        }
+        /* --- Navbar --- */
+        
+        .navbar {
+            background-color: var(--white);
+            padding: 15px 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        /* --- Header / Hero Section --- */
+        
+        .header-section {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
+            color: white;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .header-section h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .scan-container {
+            margin-top: 20px;
+        }
+        
+        .scan-btn {
+            background-color: var(--white);
+            color: var(--primary-green);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+        
+        .scan-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+        /* --- Stats Section --- */
+        
+        .stats-section {
+            position: relative;
+            margin-top: -50px;
+            margin-bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            z-index: 100;
+            width: 100%;
+        }
+        
+        .stats-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 1000px;
+            padding: 0 20px;
+        }
+        
+        .stat-box {
+            background: var(--white);
+            flex: 1;
+            min-width: 150px;
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        
+        .reset-btn-container {
+            margin-top: 10px;
+        }
+        
+        .reset-btn {
+            background: var(--white);
+            border: 1px solid #d32f2f;
+            color: #d32f2f;
+            padding: 10px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .reset-btn:hover {
+            background: #d32f2f;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(211, 47, 47, 0.2);
+        }
+        
+        .stat-box h2 {
+            font-size: 2rem;
+            color: var(--primary-green);
+            margin-bottom: 5px;
+        }
+        
+        .stat-box p {
+            font-size: 0.85rem;
+            color: var(--text-grey);
+            font-weight: 500;
+        }
+        /* --- Prediction Result --- */
+        
+        #prediction-container {
+            margin: 20px auto 40px;
+            padding: 25px;
+            max-width: 600px;
+            background-color: var(--white);
+            border-radius: var(--radius);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            display: none;
+            border-left: 5px solid var(--accent-green);
+        }
+        
+        #image-preview {
+            max-width: 100%;
+            height: auto;
+            max-height: 300px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            object-fit: contain;
+            background-color: #f0f0f0;
+        }
+        
+        #prediction-result h3 {
+            color: var(--primary-green);
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+        /* --- Categories --- */
+        
+        .section-title {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 40px;
+            height: 3px;
+            background-color: var(--accent-green);
+            margin: 5px auto 0;
+            border-radius: 2px;
+        }
+        
+        .category-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+            padding: 0 15px;
+        }
+        
+        .category-btn {
+            background-color: var(--white);
+            border: 1px solid #ddd;
+            color: var(--text-grey);
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .category-btn:hover,
+        .category-btn.active {
+            background-color: var(--primary-green);
+            color: var(--white);
+            border-color: var(--primary-green);
+            box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3);
+        }
+        /* --- Gallery Grid --- */
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .disease-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .disease-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .disease-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        
+        .card-details {
+            padding: 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+        
+        .card-link {
+            font-size: 0.85rem;
+            color: var(--accent-green);
+            text-decoration: none;
+            margin-bottom: 12px;
+            display: inline-block;
+        }
+        
+        .card-link:hover {
+            text-decoration: underline;
+        }
+        
+        .tags-container {
+            margin-top: auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        
+        .tag {
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .tag.plant {
+            background-color: var(--light-green);
+            color: var(--primary-green);
+        }
+        
+        .tag.symptom {
+            background-color: #fff3e0;
+            color: #e65100;
+        }
+        /* Loading Animation */
+        
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-green);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+            display: none;
+        }
+        
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .stat-box {
+                min-width: 100%;
+            }
+            .header-section h1 {
+                font-size: 1.5rem;
+            }
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+            .warning-box {
+                background-color: #fff8e1;
+                /* Warna latar kuning lembut */
+                border: 1px solid #ffe082;
+                border-radius: 12px;
+                padding: 30px 20px;
+                text-align: center;
+                color: #5d4037;
+                animation: fadeIn 0.5s ease;
+            }
+            .warning-icon {
+                font-size: 3rem;
+                color: #ffb300;
+                /* Warna ikon oranye */
+                margin-bottom: 15px;
+            }
+            .warning-title {
+                font-size: 1.2rem;
+                font-weight: 600;
+                margin-bottom: 10px;
+                color: #f57f17;
+            }
+            .warning-desc {
+                font-size: 0.95rem;
+                color: #6d4c41;
+                margin-bottom: 20px;
+            }
+            .warning-detected {
+                background-color: #ffffff;
+                padding: 8px 15px;
+                border-radius: 20px;
+                font-size: 0.85rem;
+                font-weight: 600;
+                display: inline-block;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            }
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            .scan-btn a {
+                text-decoration: none;
+                color: inherit;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="brand">
+            <i class="fas fa-leaf"></i>
+            <span>PlantCheck</span>
+        </div>
+    </nav>
+
+    <div class="header-section">
+        <h1>Deteksi Penyakit Tanaman</h1>
+        <p>Unggah foto daun untuk mendeteksi penyakit</p>
+
+        <div class="scan-container">
+            <!-- UBAH INI: Jadikan anchor link ke scan.html -->
+            <a href="scan.html" class="scan-btn">
+                <i class="fas fa-camera"></i> Scan Daun
+            </a>
+            <!-- HAPUS input file karena tidak digunakan di halaman ini -->
+        </div>
+    </div>
+
+    <input type="file" id="file-input" accept="image/*" style="display: none;">
+    <div class="stats-section">
+        <div class="stats-container">
+            <div class="stat-box">
+                <h2 id="diagnosa-count">0</h2>
+                <p>Total Diagnosa</p>
+            </div>
+            <div class="stat-box">
+                <h2 id="akurasi-detect">0%</h2>
+                <p>Akurasi Terakhir</p>
+            </div>
+            <div class="stat-box">
+                <h2 id="penyakit-count">0</h2>
+                <p>Dataset Penyakit</p>
+            </div>
+        </div>
+
+        <div class="reset-btn-container">
+            <button id="reset-stats-btn" class="reset-btn">
+            <i class="fas fa-sync-alt"></i> Reset Statistik
+        </button>
+        </div>
+    </div>
+    <div id="prediction-container">
+        <img id="image-preview" src="" alt="Preview Gambar">
+        <div id="prediction-loader" class="loader"></div>
+        <div id="prediction-result"></div>
+    </div>
+
+    <div class="section-title">Kategori Tanaman</div>
+    <div class="category-container">
+        <button class="category-btn" data-category="Tomat">Daun Tomat</button>
+        <button class="category-btn" data-category="Singkong">Daun Singkong</button>
+        <button class="category-btn" data-category="Padi">Daun Padi</button>
+        <button class="category-btn" data-category="Kentang">Daun Kentang</button>
+        <button class="category-btn" data-category="Jagung">Daun Jagung</button>
+    </div>
+
+    <div class="section-title">Pustaka Penyakit</div>
+    <div class="gallery-grid Frame7">
+
+        <div class="disease-card Penyakit Tomat">
+            <img src="1.jpeg" alt="Yellow Leaf Curl Virus">
+            <div class="card-details">
+                <div class="card-title">Yellow Leaf Curl Virus</div>
+                <a href="deskripsi.html?tanaman=Leaf_Curl" class="card-link">Lihat detail <i class="fas fa-arrow-right"></i></a>
+                <div class="tags-container">
+                    <span class="tag plant">Tomat</span>
+                    <span class="tag symptom">Menggulung</span>
+                    <span class="tag symptom">Menguning</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="disease-card Penyakit Tomat">
+            <img src="2.jpeg" alt="Septoria Leaf Spot">
+            <div class="card-details">
+                <div class="card-title">Septoria Leaf Spot</div>
+                <a href="deskripsi.html?tanaman=Leaf_Spot" class="card-link">Lihat detail <i class="fas fa-arrow-right"></i></a>
+                <div class="tags-container">
+                    <span class="tag plant">Tomat</span>
+                    <span class="tag symptom">Bercak</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="disease-card Penyakit Tomat">
+            <img src="4.jpeg" alt="Leaf Mold">
+            <div class="card-details">
+                <div class="card-title">Leaf Mold</div>
+                <a href="deskripsi.html?tanaman=Leaf_Mold" class="card-link">Lihat detail <i class="fas fa-arrow-right"></i></a>
+                <div class="tags-container">
+                    <span class="tag plant">Tomat</span>
+                    <span class="tag symptom">Jamur</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="disease-card Penyakit Tomat">
+            <img src="5.jpeg" alt="Late Blight">
+            <div class="card-details">
+                <div class="card-title">Late Blight</div>
+                <a href="deskripsi.html?tanaman=Late_Blight" class="card-link">Lihat detail <i class="fas fa-arrow-right"></i></a>
+                <div class="tags-container">
+                    <span class="tag plant">Tomat</span>
+                    <span class="tag symptom">Busuk Daun</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="disease-card Penyakit Tomat">
+            <img src="3.jpeg" alt="Bacterial Spot">
+            <div class="card-details">
+                <div class="card-title">Bacterial Spot</div>
+                <a href="deskripsi.html?tanaman=Bacterial_Spot" class="card-link">Lihat detail <i class="fas fa-arrow-right"></i></a>
+                <div class="tags-container">
+                    <span class="tag plant">Tomat</span>
+                    <span class="tag symptom">Bakteri</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="disease-card Penyakit Singkong">
+            <img src="7.jpeg" alt="Mosaic Disease">
+            <div class="card-details">
+                <div class="card-title">Mosaic Disease</div>
+                <a href="deskripsi.html?tanaman=Mosaic_Disease" class="card-link">Lihat detail <i class="fas fa-arrow-right"></i></a>
+                <div class="tags-container">
+                    <span class="tag plant">Singkong</span>
+                    <span class="tag symptom">Mosaik</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="disease-card Penyakit Singkong">
+            <img src="13.jpeg" alt="Green Mottle">
+            <div class="card-details">
+                <div class="card-title">Green Mottle</div>
+                <a href="deskripsi.html?tanaman=Green_Mottle" class="card-link">Lihat detail <i class="fas fa-arrow-right"></i></a>
+                <div class="tags-container">
+                    <span class="tag plant">Singkong</span>
+                    <span class="tag symptom">Beludru</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="disease-card Penyakit Singkong">
+            <img src="16.jpeg" alt="Brown Streak Disease">
+            <div class="card-details">
+                <div class="card-title">Brown Streak Disease</div>
+                <a href="deskripsi.html?tanaman=Brown_Streak" class="card-link">Lihat detail <i class="fas fa-arrow-right"></i></a>
+                <div class="tags-container">
+                    <span class="tag plant">Singkong</span>
+                    <span class="tag symptom">Garis Coklat</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="disease-card Penyakit Singkong">
+            <img src="19.jpeg" alt="Bacterial Blight">
+            <div class="card-details">
+                <div class="card-title">Bacterial Blight</div>
+                <a href="deskripsi.html?tanaman=Bacterial_Blight" class="card-link">Lihat detail <i class="fas fa-arrow-right"></i></a>
+                <div class="tags-container">
+                    <span class="tag plant">Singkong</span>
+                    <span class="tag symptom">Hawar</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="disease-card Penyakit Padi">
+            <img src="8.jpeg" alt="Sheath Blight">
+            <div class="card-details">
+                <div class="card-title">Sheath Blight</div>
+                <a href="deskripsi.html?tanaman=Sheath_Blight" class="card-link">Lihat detail <i class="fas fa-arrow-right"></i></a>
+                <div class="tags-container">
+                    <span class="tag plant">Padi</span>
+                    <span class="tag symptom">Hawar Pelepah</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="disease-card Penyakit Padi">
+            <img src="11.jpeg" alt="Leaf Scald">
+            <div class="card-details">
+                <div class="card-title">Leaf Scald</div>
+                <a href="deskripsi.html?tanaman=Leaf_Scald" class="card-link">Lihat detail <i class="fas fa-arrow-right"></i></a>
+                <div class="tags-container">
+                    <span class="tag plant">Padi</span>
+                    <span class="tag symptom">Bercak</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="disease-card Penyakit Padi">
+            <img src="14.jpeg" alt="Brown Spot">
+            <div class="card-details">
+                <div class="card-title">Brown Spot</div>
+                <a href="deskripsi.html?tanaman=Brown_Spot" class="card-link">Lihat detail <i class="fas fa-arrow-right"></i></a>
+                <div class="tags-container">
+                    <span class="tag plant">Padi</span>
+                    <span class="tag symptom">Bercak Coklat</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="disease-card Penyakit Padi">
+            <img src="18.jpeg" alt="Leaf Blight">
+            <div class="card-details">
+                <div class="card-title">Leaf Blight</div>
+                <a href="deskripsi.html?tanaman=Bacterial_Leaf" class="card-link">Lihat detail <i class="fas fa-arrow-right"></i></a>
+                <div class="tags-container">
+                    <span class="tag plant">Padi</span>
+                    <span class="tag symptom">Hawar Daun</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="disease-card Penyakit Kentang">
+            <img src="17.jpeg" alt="Late Blight">
+            <div class="card-details">
+                <div class="card-title">Late Blight</div>
+                <a href="deskripsi.html?tanaman=Late_Blight2" class="card-link">Lihat detail <i class="fas fa-arrow-right"></i></a>
+                <div class="tags-container">
+                    <span class="tag plant">Kentang</span>
+                    <span class="tag symptom">Busuk Daun</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="disease-card Penyakit Kentang">
+            <img src="10.jpeg" alt="Early Blight">
+            <div class="card-details">
+                <div class="card-title">Early Blight</div>
+                <a href="deskripsi.html?tanaman=Early_Blight" class="card-link">Lihat detail <i class="fas fa-arrow-right"></i></a>
+                <div class="tags-container">
+                    <span class="tag plant">Kentang</span>
+                    <span class="tag symptom">Bercak Kering</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="disease-card Penyakit Jagung">
+            <img src="9.jpeg" alt="Northern Leaf Blight">
+            <div class="card-details">
+                <div class="card-title">Northern Leaf Blight</div>
+                <a href="deskripsi.html?tanaman=Northern_Leaf" class="card-link">Lihat detail <i class="fas fa-arrow-right"></i></a>
+                <div class="tags-container">
+                    <span class="tag plant">Jagung</span>
+                    <span class="tag symptom">Hawar</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="disease-card Penyakit Jagung">
+            <img src="12.jpeg" alt="Common Rust">
+            <div class="card-details">
+                <div class="card-title">Common Rust</div>
+                <a href="deskripsi.html?tanaman=Common_Rust" class="card-link">Lihat detail <i class="fas fa-arrow-right"></i></a>
+                <div class="tags-container">
+                    <span class="tag plant">Jagung</span>
+                    <span class="tag symptom">Karat Daun</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="disease-card Penyakit Jagung">
+            <img src="15.jpeg" alt="Gray Leaf Spot">
+            <div class="card-details">
+                <div class="card-title">Gray Leaf Spot</div>
+                <a href="deskripsi.html?tanaman=Gray_Leaf" class="card-link">Lihat detail <i class="fas fa-arrow-right"></i></a>
+                <div class="tags-container">
+                    <span class="tag plant">Jagung</span>
+                    <span class="tag symptom">Bercak Abu</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- SCRIPT UNTUK STATISTIK ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const diagnosaCount = localStorage.getItem('diagnosaCount') || 0;
+            const penyakitCount = 18;
+            const lastAccuracy = localStorage.getItem('lastAccuracy') || '0%';
+
+            document.getElementById('diagnosa-count').textContent = diagnosaCount;
+            document.getElementById('penyakit-count').textContent = penyakitCount;
+            document.getElementById('akurasi-detect').textContent = lastAccuracy;
+        });
+
+        // --- FILTER KATEGORI ---
+        document.querySelectorAll('.category-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                // Hapus kelas active dari semua tombol
+                document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+                // Tambah kelas active ke tombol yang diklik
+                this.classList.add('active');
+
+                const selectedCategory = this.getAttribute('data-category');
+
+                document.querySelectorAll('.Frame7 > div[class^="disease-card"]').forEach(penyakit => {
+                    // Cek apakah element memiliki class kategori yang dipilih
+                    if (penyakit.classList.contains(selectedCategory)) {
+                        penyakit.style.display = 'flex'; // Menggunakan flex karena struktur card baru
+                    } else {
+                        penyakit.style.display = 'none';
+                    }
+                });
+            });
+        });
+        // Logika Tombol Reset
+        document.getElementById('reset-stats-btn').addEventListener('click', function() {
+            localStorage.removeItem('diagnosaCount');
+            localStorage.removeItem('penyakitCount');
+            localStorage.removeItem('lastAccuracy');
+
+            // Update tampilan angka menjadi 0
+            document.getElementById('diagnosa-count').textContent = '0';
+            document.getElementById('akurasi-detect').textContent = '0%';
+            document.getElementById('penyakit-count').textContent = '18'; // Dataset tetap 18            
+        });
+    </script>
+</body>
+
+</html>

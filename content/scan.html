@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pindai Penyakit Tanaman</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e8f5e9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+        
+        .scan-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+        }
+        
+        .image-placeholder {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            width: 100%;
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            background-color: #f9f9f9;
+        }
+        
+        .placeholder-icon {
+            font-size: 50px;
+            color: #a5d6a7;
+        }
+        
+        #image-preview {
+            max-width: 100%;
+            max-height: 100%;
+            display: none;
+            object-fit: contain;
+        }
+        
+        #camera-stream {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .gallery-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .gallery-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .btn-blue {
+            background-color: #2196F3;
+        }
+        
+        .btn-blue:hover {
+            background-color: #1e88e5;
+        }
+        
+        .btn-red {
+            background-color: #f44336;
+        }
+        
+        .btn-red:hover {
+            background-color: #e53935;
+        }
+        
+        #prediction-result h3 {
+            color: #2c5e2e;
+            margin-bottom: 5px;
+        }
+        
+        .back-link {
+            margin-top: 20px;
+            text-decoration: none;
+            color: #388e3c;
+            font-weight: bold;
+        }
+        
+        .info-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 8px 16px;
+            background-color: #388e3c;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+        /* Style untuk Warning Bukan Tanaman */
+        
+        .warning-box {
+            background-color: #fff8e1;
+            border: 1px solid #ffe082;
+            border-radius: 8px;
+            padding: 15px;
+            color: #5d4037;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="scan-container">
+        <div class="image-placeholder" id="placeholder-container">
+            <i class="fas fa-leaf placeholder-icon"></i>
+            <img id="image-preview" src="#" alt="Pratinjau Gambar">
+            <video id="camera-stream" autoplay playsinline></video>
+            <canvas id="camera-canvas" style="display:none;"></canvas>
+        </div>
+
+        <div class="button-group" id="main-buttons">
+            <button class="gallery-btn" id="gallery-btn">
+                <i class="fas fa-images"></i> Galeri
+            </button>
+            <button class="gallery-btn btn-blue" id="camera-btn">
+                <i class="fas fa-camera"></i> Kamera
+            </button>
+        </div>
+
+        <button id="capture-btn" class="gallery-btn btn-red" style="display:none; margin: 0 auto 20px;">
+            <i class="fas fa-circle"></i> Ambil Foto
+        </button>
+
+        <input type="file" id="file-input" accept="image/*" style="display: none;">
+
+        <div id="prediction-container">
+            <div id="prediction-result"></div>
+            <div id="prediction-loader" style="display: none; margin-top:10px; color:#666;">
+                <i class="fas fa-spinner fa-spin"></i> Menganalisis gambar...
+            </div>
+        </div>
+    </div>
+
+    <a href="home.html" class="back-link">Kembali ke Beranda</a>
+
+    <script>
+        const galleryButton = document.getElementById('gallery-btn');
+        const cameraButton = document.getElementById('camera-btn');
+        const captureButton = document.getElementById('capture-btn');
+        const fileInput = document.getElementById('file-input');
+        const imagePreview = document.getElementById('image-preview');
+        const placeholderIcon = document.querySelector('.placeholder-icon');
+        const videoElement = document.getElementById('camera-stream');
+        const canvasElement = document.getElementById('camera-canvas');
+        const predictionResult = document.getElementById('prediction-result');
+        const loader = document.getElementById('prediction-loader');
+        const mainButtons = document.getElementById('main-buttons');
+        let stream = null;
+
+        // --- 1. Fungsi Tombol Galeri ---
+        galleryButton.addEventListener('click', () => {
+            stopCamera();
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';
+                placeholderIcon.style.display = 'none';
+                videoElement.style.display = 'none';
+            }
+            reader.readAsDataURL(file);
+            uploadImage(file);
+        });
+
+        // --- 2. Fungsi Tombol Kamera ---
+        cameraButton.addEventListener('click', async() => {
+            imagePreview.style.display = 'none';
+            placeholderIcon.style.display = 'none';
+            predictionResult.innerHTML = '';
+
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: "environment"
+                    }
+                });
+                videoElement.srcObject = stream;
+                videoElement.style.display = 'block';
+
+                // Ganti tombol
+                mainButtons.style.display = 'none';
+                captureButton.style.display = 'flex';
+
+            } catch (err) {
+                alert("Gagal mengakses kamera: " + err);
+                placeholderIcon.style.display = 'block';
+            }
+        });
+
+        // --- 3. Fungsi Ambil Foto (Capture) ---
+        captureButton.addEventListener('click', () => {
+            // Ambil gambar dari video ke canvas
+            canvasElement.width = videoElement.videoWidth;
+            canvasElement.height = videoElement.videoHeight;
+            const context = canvasElement.getContext('2d');
+            context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+
+            // Matikan stream kamera
+            stopCamera();
+
+            // Ubah ke Blob lalu Upload
+            canvasElement.toBlob(blob => {
+                const url = URL.createObjectURL(blob);
+                imagePreview.src = url;
+                imagePreview.style.display = 'block';
+
+                uploadImage(blob);
+            }, 'image/jpeg');
+        });
+
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            videoElement.style.display = 'none';
+            captureButton.style.display = 'none';
+            mainButtons.style.display = 'flex';
+        }
+
+        // --- 4. Fungsi Upload ke Server ---
+        function uploadImage(fileOrBlob) {
+            loader.style.display = 'block';
+            predictionResult.innerHTML = '';
+
+            const formData = new FormData();
+            formData.append('file', fileOrBlob, 'image.jpg');
+
+            fetch('http://localhost:5000/predict', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    loader.style.display = 'none';
+
+                    if (data.is_not_plant) {
+                        let objectName = data.detected_object.replace(/_/g, ' ');
+                        predictionResult.innerHTML = `
+                        <div class="warning-box">
+                            <i class="fas fa-search-minus" style="font-size: 2rem; color: #ffb300;"></i>
+                            <h4>Bukan Tanaman</h4>                            
+                        </div>
+                    `;
+                    } else if (data.error) {
+                        predictionResult.innerHTML = `<p style="color: red;">Error: ${data.error}</p>`;
+                    } else {
+                        let detailLink = '';
+                        localStorage.setItem('lastAccuracy', data.confidence);
+
+                        if (data.prediction_slug) {
+                            detailLink = `<a href="deskripsi.html?tanaman=${data.prediction_slug}" class="info-link">Lihat Info Penyakit</a>`;
+
+                            let currentDiagnosa = parseInt(localStorage.getItem('diagnosaCount') || '0');
+                            let currentPenyakit = parseInt(localStorage.getItem('penyakitCount') || '0');
+                            localStorage.setItem('diagnosaCount', currentDiagnosa + 1);
+                            localStorage.setItem('penyakitCount', currentPenyakit + 1);
+                        }
+                        predictionResult.innerHTML = `
+                        <h3>${data.prediction}</h3>
+                        <p>Akurasi: <strong>${data.confidence}</strong></p>
+                        ${detailLink}
+                    `;
+                    }
+                })
+                .catch(error => {
+                    loader.style.display = 'none';
+                    predictionResult.innerHTML = `<p style="color: red;">Gagal terhubung ke server.</p>`;
+                    console.error(error);
+                });
+        }
+    </script>
+</body>
+
+</html>

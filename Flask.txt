@@ -1,0 +1,141 @@
+import os
+import io
+from flask import Flask, request, jsonify, render_template
+from flask_cors import CORS
+import tensorflow as tf
+from PIL import Image
+import numpy as np
+
+# Decorator ini "mendaftarkan" kelas kustom ini ke Keras.
+# Ini penting agar model yang menggunakan layer ini bisa disimpan (save) dan dimuat (load) dengan benar.
+@tf.keras.utils.register_keras_serializable()
+class FixedDropout(tf.keras.layers.Layer):
+    def __init__(self, rate, noise_shape=None, seed=None, **kwargs):
+        super(FixedDropout, self).__init__(**kwargs)
+        self.rate = rate
+        self.noise_shape = noise_shape
+        self.seed = seed
+
+    def call(self, inputs, training=None):
+        if training:
+            return tf.nn.dropout(inputs, rate=self.rate, seed=self.seed, noise_shape=self.noise_shape)
+        return inputs
+    
+    def get_config(self):
+        config = super(FixedDropout, self).get_config()
+        config.update({
+            'rate': self.rate,
+            'noise_shape': self.noise_shape,
+            'seed': self.seed
+        })
+        return config
+
+    @classmethod
+    def from_config(cls, config):
+        return cls(**config)
+
+app = Flask(__name__)
+CORS(app)
+
+# Mengatur model & gambar
+MODEL_FILENAME = 'model_cnn.keras' 
+MODEL_PATH = os.path.join('model', MODEL_FILENAME)
+IMAGE_HEIGHT = 300
+IMAGE_WIDTH = 300
+policy = tf.keras.mixed_precision.Policy('mixed_float16')
+tf.keras.mixed_precision.set_global_policy(policy)
+
+# Memuat model dan gambar
+model = None
+class_names = []
+try:
+    # Menambahkan 'swish' ke dalam custom_objects
+    custom_objects = {
+        "FixedDropout": FixedDropout,
+        "swish": tf.keras.activations.swish  # 
+    }
+    
+    model = tf.keras.models.load_model(MODEL_PATH, custom_objects=custom_objects)
+    print("✅ Model berhasil dimuat!")
+    
+    LABELS_PATH = os.path.join('model', 'labels.txt')
+    with open(LABELS_PATH, 'r', encoding='utf-8') as f:
+        class_names = [line.strip() for line in f.readlines()]
+    print(f"✅ Label berhasil dimuat: {len(class_names)} kelas ditemukan.")
+
+except Exception as e:
+    print(f"❌ Error saat memuat model atau label: {e}")
+
+# Label yang digunakan
+prediction_slugs = {
+    "Daun Jagung Terserang Cercospora Leaf Spot Gray Leaf Spot": "Gray_Leaf",
+    "Daun Jagung Terserang Common Rust": "Common_Rust",
+    "Daun Jagung Terserang Northern Leaf Blight": "Northern_Leaf",
+    "Daun Kentang Terserang Early Blight": "Early_Blight",
+    "Daun Kentang Terserang Late Blight": "Late_Blight2",
+    "Daun Padi Terserang Bacterial Leaf Blight": "Bacterial_Leaf",
+    "Daun Padi Terserang Brown Spot": "Brown_Spot",
+    "Daun Padi Terserang Leaf Scald": "Leaf_Scald",
+    "Daun Padi Terserang Sheath Blight": "Sheath_Blight",
+    "Daun Singkong Terserang Bacterial Blight": "Bacterial_Blight",
+    "Daun Singkong Terserang Brown Streak Disease": "Brown_Streak",
+    "Daun Singkong Terserang Green Mottle": "Green_Mottle",
+    "Daun Singkong Terserang Mosaic Disease": "Mosaic_Disease",
+    "Daun Tomat Terserang Bacterial Spot": "Bacterial_Spot",
+    "Daun Tomat Terserang Late Blight": "Late_Blight",
+    "Daun Tomat Terserang Leaf Mold": "Leaf_Mold",
+    "Daun Tomat Terserang Septoria Leaf Spot": "Leaf_Spot",
+    "Daun Tomat Terserang Yellow Leaf Curl Virus": "Leaf_Curl"
+}
+#menyiapkan gambar mentah (scan) untuk dilatih ke CNN
+def preprocess_image(image_data):
+    img = Image.open(io.BytesIO(image_data)).convert('RGB')
+    img = img.resize((IMAGE_WIDTH, IMAGE_HEIGHT))
+    img_array = tf.keras.preprocessing.image.img_to_array(img)
+    img_array = np.expand_dims(img_array, axis=0)
+    img_array = img_array / 255.0
+    return img_array
+
+# Menyiapkan rute ke beranda
+@app.route('/')
+def index():
+    return render_template('home.html')
+
+# rute ke scan.html
+@app.route('/scan')
+def scan_page():
+    return render_template('scan.html')
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    if 'file' not in request.files:
+        return jsonify({'error': 'Request tidak berisi file'}), 400
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'Tidak ada file yang dipilih'}), 400
+
+    if model is None:
+        return jsonify({'error': 'Model tidak berhasil dimuat saat server dimulai. Periksa log terminal.'}), 500
+
+# kode untuk menginterpretasikan hasil prediksi dari gambar scan
+    try:
+        image_data = file.read()
+        processed_image = preprocess_image(image_data)
+        prediction = model.predict(processed_image)
+        
+        predicted_class_index = np.argmax(prediction[0])
+        predicted_class_name = class_names[predicted_class_index]
+        confidence = float(np.max(prediction[0])) * 100
+
+        predicted_slug = prediction_slugs.get(predicted_class_name, None)
+
+        return jsonify({
+            'prediction': predicted_class_name,
+            'confidence': f"{confidence:.2f}%",
+            'prediction_slug': predicted_slug
+        })
+    except Exception as e:
+        return jsonify({'error': f'Terjadi kesalahan saat prediksi: {str(e)}'}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
