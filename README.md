@@ -17,15 +17,17 @@ Agar file terdownload dengan sempurna, kamu **DAPAT** mengikuti langkah langkah 
     ```
 
 3.  **Clone Repository**: 
-    * **Windows:** ```cmd
+    * **Windows:** 
+      ```cmd
       1. set GIT_LFS_SKIP_SMUDGE=1
-      2. git clone https://github.com/Gitkamal123/Plant-Check-Disease.git
+      2. git clone [https://github.com/Gitkamal123/Plant-Check-Disease.git](https://github.com/Gitkamal123/Plant-Check-Disease.git)
       3. cd Plant-Check-Disease
       4. git lfs pull
       ```
 
-    * **Linux/Mac/Git Bash:** ```bash
-      1. GIT_LFS_SKIP_SMUDGE=1 git clone https://github.com/Gitkamal123/Plant-Check-Disease.git
+    * **Linux/Mac/Git Bash:** 
+      ```bash
+      1. GIT_LFS_SKIP_SMUDGE=1 git clone [https://github.com/Gitkamal123/Plant-Check-Disease.git](https://github.com/Gitkamal123/Plant-Check-Disease.git)
       2. cd Plant-Check-Disease
       3. git lfs pull
       ```
