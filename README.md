@@ -16,8 +16,7 @@ Agar file terdownload dengan sempurna, kamu **WAJIB** menginstall Git LFS terleb
     git lfs install
     ```
 
-3.  **Clone Repository**
-    Sekarang baru aman untuk clone:
+3.  **Clone Repository**:
     ```bash
     git clone https://github.com/Gitkamal123/Plant-Check-Disease.git
     ```
