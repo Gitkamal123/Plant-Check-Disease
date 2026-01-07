@@ -19,7 +19,7 @@ Agar file terdownload dengan sempurna, kamu **WAJIB** menginstall Git LFS terleb
 3.  **Clone Repository**
     Sekarang baru aman untuk clone:
     ```bash
-    git clone [https://github.com/Gitkamal123/Plant-Check-Disease.git](https://github.com/Gitkamal123/Plant-Check-Disease.git)
+    git clone https://github.com/Gitkamal123/Plant-Check-Disease.git
     ```
 
 > *Jika kamu clone tanpa install Git LFS dulu, file model AI tidak akan bisa digunakan.*
