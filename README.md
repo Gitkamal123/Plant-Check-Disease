@@ -1,7 +1,7 @@
 ## ⚠️ PENTING: Cara Clone Repository Ini
 
 Project ini menggunakan **Git LFS** untuk menyimpan file model AI yang besar.
-Agar file terdownload dengan sempurna, kamu **WAJIB** menginstall Git LFS terlebih dahulu sebelum melakukan clone.
+Agar file terdownload dengan sempurna, kamu **DAPAT** mengikuti langkah langkah dibawah ini
 
 **Langkah-langkah:**
 
@@ -16,9 +16,15 @@ Agar file terdownload dengan sempurna, kamu **WAJIB** menginstall Git LFS terleb
     git lfs install
     ```
 
-3.  **Clone Repository**:
-    ```bash
-    git clone https://github.com/Gitkamal123/Plant-Check-Disease.git
-    ```
+3.  **Clone Repository**: 
+    * **Windows:** 1. set GIT_LFS_SKIP_SMUDGE=1
+                   2. git clone https://github.com/Gitkamal123/Plant-Check-Disease.git
+                   3. cd Plant-Check-Disease
+                   4. git lfs pull
 
-> *Jika kamu clone tanpa install Git LFS dulu, file model AI tidak akan bisa digunakan.*
+    * **Linux/Mac/Git Bash:** 1. GIT_LFS_SKIP_SMUDGE=1 git clone https://github.com/Gitkamal123/Plant-Check-Disease.git
+                              2. cd Plant-Check-Disease
+                              3. git lfs pull
+    
+
+> *Ikuti langkah diatas agar dapat mendownload secara sempurna.*
