@@ -428,11 +428,9 @@
         <p>Unggah foto daun untuk mendeteksi penyakit</p>
 
         <div class="scan-container">
-            <!-- UBAH INI: Jadikan anchor link ke scan.html -->
             <a href="scan.html" class="scan-btn">
                 <i class="fas fa-camera"></i> Scan Daun
             </a>
-            <!-- HAPUS input file karena tidak digunakan di halaman ini -->
         </div>
     </div>
 
@@ -721,7 +719,7 @@
                 document.querySelectorAll('.Frame7 > div[class^="disease-card"]').forEach(penyakit => {
                     // Cek apakah element memiliki class kategori yang dipilih
                     if (penyakit.classList.contains(selectedCategory)) {
-                        penyakit.style.display = 'flex'; // Menggunakan flex karena struktur card baru
+                        penyakit.style.display = 'flex';
                     } else {
                         penyakit.style.display = 'none';
                     }

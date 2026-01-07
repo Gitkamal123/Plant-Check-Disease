@@ -236,13 +236,10 @@
 
         // --- 3. Fungsi Ambil Foto (Capture) ---
         captureButton.addEventListener('click', () => {
-            // Ambil gambar dari video ke canvas
             canvasElement.width = videoElement.videoWidth;
             canvasElement.height = videoElement.videoHeight;
             const context = canvasElement.getContext('2d');
             context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
-
-            // Matikan stream kamera
             stopCamera();
 
             // Ubah ke Blob lalu Upload

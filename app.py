@@ -6,7 +6,6 @@ import tensorflow as tf
 from PIL import Image
 import numpy as np
 
-# --- IMPORT VALIDATOR ---
 from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2, preprocess_input as mobile_preprocess, decode_predictions
 
 # Decorator FixedDropout
